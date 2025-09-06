@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:internal/models/meal.dart';
 import 'package:internal/screens/categoty.dart';
+import 'package:internal/screens/filters.dart';
 import 'package:internal/screens/meals.dart';
+import 'package:internal/widgets/main_drawer.dart';
 
 class Tabs extends StatefulWidget {
   const Tabs({super.key});
@@ -12,10 +15,26 @@ class Tabs extends StatefulWidget {
 class _TabsState extends State<Tabs> {
   int selectedIndex = 0;
 
+  final List<Meal> favItems = [];
+
   void selectIndex(index) {
     setState(() {
       selectedIndex = index;
     });
+  }
+
+  void toogleFav(Meal meal) {
+    final isFav = favItems.contains(meal);
+
+    if (isFav) {
+      setState(() {
+        favItems.remove(meal);
+      });
+    } else {
+      setState(() {
+        favItems.add(meal);
+      });
+    }
   }
 
   @override
@@ -28,8 +47,18 @@ class _TabsState extends State<Tabs> {
       activeTitle = "Your Favotites";
     }
 
+    void setScreen(String page) {
+      Navigator.pop(context);
+      if (page == 'filters') {
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => FilterScreen()));
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text(activeTitle)),
+      drawer: MainDrawer(onSelected: setScreen),
       body: activeScreen,
       bottomNavigationBar: BottomNavigationBar(
         onTap: selectIndex,
